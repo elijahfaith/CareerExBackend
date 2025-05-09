@@ -20,79 +20,56 @@ const drugs = [
     { id: 19, name: "Tramadol", category: "Analgesic", dosageMg: 50, isPrescriptionOnly: true, stock: 45, manufacturer: "Teva" },
     { id: 20, name: "Folic Acid", category: "Supplement", dosageMg: 5, isPrescriptionOnly: false, stock: 250, manufacturer: "Nature’s Bounty" }
   ];
-
   
-  const express = require('express');
-const app = express();
-const port = 3000;
-
-app.use(express.json());
-
-// 1. GET /drugs/antibiotics
-app.get('/drugs/antibiotics', (req, res) => {
-    const antibiotics = drugs.filter(drug => drug.category === 'Antibiotic');
-    res.json(antibiotics);
-});
-
-// 2. GET /drugs/names
-app.get('/drugs/names', (req, res) => {
-    const drugNames = drugs.map(drug => drug.name.toLowerCase());
-    res.json(drugNames);
-});
-
-// 3. POST /drugs/by-category
-app.post('/drugs/by-category', (req, res) => {
-    const { category } = req.body;
-    const filteredDrugs = drugs.filter(drug => drug.category === category);
-    res.json(filteredDrugs);
-});
-
-// 4. GET /drugs/names-manufacturers
-app.get('/drugs/names-manufacturers', (req, res) => {
-    const namesManufacturers = drugs.map(drug => ({
-        name: drug.name,
-        manufacturer: drug.manufacturer
-    }));
-    res.json(namesManufacturers);
-});
-
-// 5. GET /drugs/prescription
-app.get('/drugs/prescription', (req, res) => {
-    const prescriptionDrugs = drugs.filter(drug => drug.isPrescriptionOnly === true);
-    res.json(prescriptionDrugs);
-});
-
-// 6. GET /drugs/formatted
-app.get('/drugs/formatted', (req, res) => {
-    const formattedDrugs = drugs.map(drug => `Drug: ${drug.name} - ${drug.dosageMg}mg`);
-    res.json(formattedDrugs);
-});
-
-// 7. GET /drugs/low-stock
-app.get('/drugs/low-stock', (req, res) => {
-    const lowStockDrugs = drugs.filter(drug => drug.stock < 50);
-    res.json(lowStockDrugs);
-});
-
-// 8. GET /drugs/non-prescription
-app.get('/drugs/non-prescription', (req, res) => {
-    const nonPrescriptionDrugs = drugs.filter(drug => drug.isPrescriptionOnly === false);
-    res.json(nonPrescriptionDrugs);
-});
-
-// 9. POST /drugs/manufacturer-count
-app.post('/drugs/manufacturer-count', (req, res) => {
-    const { manufacturer } = req.body;
-    const count = drugs.filter(drug => drug.manufacturer === manufacturer).length;
-    res.json({ count });
-});
-
-// 10. GET /drugs/count-analgesics
-app.get('/drugs/count-analgesics', (req, res) => {
-    const count = drugs.filter(drug => drug.category === 'Analgesic').length;
-    res.json({ count });
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+  // 1. Get all drugs that are antibiotics.
+  const antibiotics = drugs.filter(drug => drug.category === "Antibiotic");
+  console.log("Antibiotics:", antibiotics);
+  
+  // 2. Return an array of drug names in lowercase.
+  const drugNamesLower = drugs.map(drug => drug.name.toLowerCase());
+  console.log("Drug names in lowercase:", drugNamesLower);
+  
+  // 3. Function to return all drugs in a category
+  function getDrugsByCategory(category) {
+    return drugs.filter(drug => drug.category === category);
+  }
+  console.log("Analgesics:", getDrugsByCategory("Analgesic"));
+  
+  // 4. Log each drug’s name and manufacturer.
+  drugs.forEach(drug => {
+    console.log(`Drug Name: ${drug.name}, Manufacturer: ${drug.manufacturer}`);
+  });
+  
+  // 5. All drugs that require a prescription
+  const prescriptionDrugs = drugs.filter(drug => drug.isPrescriptionOnly === true);
+  console.log("Prescription only drugs:", prescriptionDrugs);
+  
+  // 6. New array with format "Drug: [name] - [dosageMg]mg"
+  const formattedDrugs = drugs.map(drug => `Drug: ${drug.name} - ${drug.dosageMg}mg`);
+  console.log("Formatted drugs:", formattedDrugs);
+  
+  // 7. Function to get drugs with stock less than 50
+  function lowStockDrugs() {
+    return drugs.filter(drug => drug.stock < 50);
+  }
+  console.log("Drugs with low stock:", lowStockDrugs());
+  
+  // 8. Return drugs that are NOT prescription-only
+  const overTheCounterDrugs = drugs.filter(drug => !drug.isPrescriptionOnly);
+  console.log("Non-prescription drugs:", overTheCounterDrugs);
+  
+  // 9. Function to count drugs from a manufacturer
+  function countDrugsByManufacturer(manufacturer) {
+    return drugs.filter(drug => drug.manufacturer === manufacturer).length;
+  }
+  console.log("Drugs by Pfizer:", countDrugsByManufacturer("Pfizer"));
+  
+  // 10. Use forEach to count how many are Analgesics
+  let analgesicCount = 0;
+  drugs.forEach(drug => {
+    if (drug.category === "Analgesic") {
+      analgesicCount++;
+    }
+  });
+  console.log("Number of Analgesics:", analgesicCount);
+  

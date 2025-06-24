@@ -1,19 +1,42 @@
-const express = require("express")
-//const mongoose = require ("mongoose")
 
-const app = express()
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken")
+const Auth = require("./models/authModel");
+const pro = require("./models/propertymodel");
+const saveProperty = require("./models/savepropertymodel");
+const cors = require("cors")
+const routes = require("./routes")
 
-app.use(express.json())
 
-const PORT = process.env.PORT || 8000
+dotenv.config();
+
+
+const app = express();
+
+app.use(express.json());
+app.use(cors())
+
+const PORT = process.env.PORT || 6487;
+ 
+
+
+mongoose.connect(process.env.MONGODB_URL)
+.then(()=>{
+    console.log("MongoDb connected...")
+
+    app.listen(PORT, ()=>{
+        console.log(`server is running on Port ${PORT}`)
+    })
+});
+
 
 app.get("/", (req, res)=>{
-    res.json({
-        message: "Server is running"
-    })
-
+    res.status(200).json({message:"WELCOME TO OUR REAL ESTATE FIRM BACKEND"})
 })
 
-app.listen(PORT, ()=>{
-    console.log(`Server running on ${PORT}`)
-})
+app.use(routes)
+
+
